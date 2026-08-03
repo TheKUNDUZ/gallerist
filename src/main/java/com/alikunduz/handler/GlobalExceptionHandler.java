@@ -1,6 +1,6 @@
 package com.alikunduz.handler;
 
-import com.alikunduz.exception.BaseExcepiton;
+import com.alikunduz.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -18,8 +18,8 @@ import java.util.*;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler(value = BaseExcepiton.class)
-    public ResponseEntity<ApiEror<?>> handleBaseException(BaseExcepiton ex, WebRequest request) {
+    @ExceptionHandler(value = BaseException.class)
+    public ResponseEntity<ApiEror<?>> handleBaseException(BaseException ex, WebRequest request) {
         return ResponseEntity.badRequest().body(createApiEror(ex.getMessage(), request));
     }
 

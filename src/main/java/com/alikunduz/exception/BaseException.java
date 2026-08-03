@@ -1,10 +1,10 @@
 package com.alikunduz.exception;
 
-public class BaseExcepiton extends RuntimeException {
+public class BaseException extends RuntimeException {
 
     // ErrorMessage tipinde bir obje alıcak ve alınan değeri super ile üst sınıfın constructer a vericek
     //yani RuntimeException a vericek
-    public BaseExcepiton(ErrorMessage errorMessage) {
+    public BaseException(ErrorMessage errorMessage) {
         super(errorMessage.prepareErorMessage());
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
@@ -17,18 +18,28 @@ import java.util.function.Function;
 public class JWTService {
 
 
-    @Value("${jwt.secret}")
-    public String secretKey ;
+    public static final String SECRET_KEY = "xIo3zVkpmrf5g7YtwfMepkTN+YPLHD2p+8vAo5KKn34=";
+
+
 
     public String generateToken(UserDetails userDetails) {
 
         return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2))
+                .signWith(getKey())
+                .compact();
+    }
+
+    /*
+    return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
-    }
+     */
 
     public <T> T exportToken(String token, Function<Claims , T> claimsTFunction) {
         Claims claims = getClaims(token);
@@ -36,6 +47,15 @@ public class JWTService {
     }
 
     public Claims getClaims(String token) {
+        return Jwts.parser()
+                .verifyWith((SecretKey) getKey())
+                .build()
+                .parseSignedClaims(token).getPayload();
+
+    }
+
+
+    /*public Claims getClaims(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build()
@@ -44,6 +64,19 @@ public class JWTService {
         return claims;
     }
 
+     */
+
+
+
+    /*
+     public Claims getClaims(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith((SecretKey) getKey())
+                .build()
+                .parseSignedClaims(token).getPayload();
+
+        return claims;
+     */
 
     public String getUsernameByToken(String token) {
        return exportToken(token, Claims::getSubject);
@@ -58,7 +91,7 @@ public class JWTService {
 
     public Key getKey() {
 
-        byte[] bytes = Decoders.BASE64.decode(secretKey);
+        byte[] bytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(bytes);
     }
 

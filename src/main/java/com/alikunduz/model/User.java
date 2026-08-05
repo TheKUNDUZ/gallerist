@@ -22,7 +22,7 @@ import java.util.List;
 public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "user_name")
-    private String userName;
+    private String username;
 
     @Column(name = "password")
     private String password;
@@ -32,8 +32,10 @@ public class User extends BaseEntity implements UserDetails {
         return List.of();
     }
 
-    @Override
+   /* @Override
     public String getUsername() {
         return "";
     }
+
+    */
 }

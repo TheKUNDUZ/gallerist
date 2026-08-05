@@ -1,6 +1,6 @@
 package com.alikunduz.jwt;
 
-import com.alikunduz.exception.BaseExcepiton;
+import com.alikunduz.exception.BaseException;
 import com.alikunduz.exception.ErrorMessage;
 import com.alikunduz.exception.MessageType;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -59,10 +59,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
           }
         }
         catch (ExpiredJwtException ex){
-            throw new BaseExcepiton(new ErrorMessage(MessageType.TOKEN_IS_EXPIRED,ex.getMessage()));
+            throw new BaseException(new ErrorMessage(MessageType.TOKEN_IS_EXPIRED,ex.getMessage()));
         }
         catch (Exception e){
-            throw new BaseExcepiton(new ErrorMessage(MessageType.GENERAL_EXCEPTION,e.getMessage()));
+            throw new BaseException(new ErrorMessage(MessageType.GENERAL_EXCEPTION,e.getMessage()));
         }
 
     }

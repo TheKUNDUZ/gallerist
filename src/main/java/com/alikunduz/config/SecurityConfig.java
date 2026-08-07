@@ -1,6 +1,7 @@
 package com.alikunduz.config;
 
 
+import com.alikunduz.handler.AuthEntryPoint;
 import com.alikunduz.jwt.JWTAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,7 @@ public class SecurityConfig {
 
     public static final String REGISTER = "/register";
     public static final String AUTHENTICATE = "/authenticate";
-    public static final String REFRESH_TOKEN = "/refresh_token";
+    public static final String REFRESH_TOKEN = "/refreshToken";
 
 
     // DaoAuthenticationProvider AuthenticationProvider' ın interfacesini implemente ettiği için
@@ -30,6 +31,9 @@ public class SecurityConfig {
     @Autowired
     private JWTAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private AuthEntryPoint authEntryPoint;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,7 +43,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(REGISTER, AUTHENTICATE, REFRESH_TOKEN).permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest()
+                        .authenticated())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint)) // frontend de 401 hatası yansıması için
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

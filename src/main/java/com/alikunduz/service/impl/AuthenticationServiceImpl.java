@@ -3,6 +3,7 @@ package com.alikunduz.service.impl;
 import com.alikunduz.dto.AuthRequest;
 import com.alikunduz.dto.AuthResponse;
 import com.alikunduz.dto.DtoUser;
+import com.alikunduz.dto.RefreshTokenRequest;
 import com.alikunduz.exception.BaseException;
 import com.alikunduz.exception.ErrorMessage;
 import com.alikunduz.exception.MessageType;
@@ -93,5 +94,27 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
        } catch (Exception e) {
            throw new BaseException(new ErrorMessage(MessageType.USERNAME_OR_PASSWORD_INVALID, e.getMessage()));
        }
+    }
+    public boolean isValidRefreshToken(Date expiredDate) {
+       return new Date().before(expiredDate);
+    }
+
+    @Override
+    public AuthResponse refreshToken(RefreshTokenRequest input) {
+
+      Optional<RefreshToken> optRefreshToken = refreshTokenRepository.findByRefreshToken(input.getRefreshToken());
+      if (optRefreshToken.isEmpty()){
+          throw new BaseException(new ErrorMessage(MessageType.REFRESH_TOKEN_NOT_FOUND, input.getRefreshToken()));
+      }
+
+      if (!isValidRefreshToken(optRefreshToken.get().getExpiredDate())){
+          throw new BaseException(new ErrorMessage(MessageType.REFRESH_TOKEN_IS_EXPIRED, input.getRefreshToken()));
+      }
+
+      User user = optRefreshToken.get().getUser();
+      String accessToken = jwtService.generateToken(user);
+      RefreshToken refreshToken = createRefreshToken(user);
+      RefreshToken savedRefreshToken = refreshTokenRepository.save(refreshToken);
+        return new AuthResponse(accessToken,savedRefreshToken.getRefreshToken());
     }
 }

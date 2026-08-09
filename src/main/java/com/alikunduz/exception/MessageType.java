@@ -11,6 +11,9 @@ public enum MessageType {
     USERNAME_OR_PASSWORD_INVALID("1007", "kullanıcı adı veya şifre hatalı"),
     REFRESH_TOKEN_NOT_FOUND("1008","refresh token bulunamadı"),
     REFRESH_TOKEN_IS_EXPIRED("1009","refresh tokenın süresi dolmuştur"),
+    CURRENCY_RATES_IS_OCCURED("1010","döviz kuru alınırken bir hata oluştu"),
+    CUSTOMER_AMOUNT_IS_NOT_ENOUGH("1011","müşterinin parası yeterli değildir"),
+    CAR_STATUS_ALREADY_SALED("1012","araba satılmış gözüktüğü için satılamaz"),
     GENERAL_EXCEPTION("9999", "genel bir hata oluştu");
 
     private String code;
